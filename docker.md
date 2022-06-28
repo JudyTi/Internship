@@ -1,5 +1,6 @@
-# Notes from Wael's video
-## Microservices Architecture
+# [Notes from Wael's video](https://gitlab.es.f5net.com/cloud/labs/docker)
+## Concepts
+### Microservices Architecture
 It's an architectural style that structures an application as a collection of services that are
 - highly maintainable and testable
 - loosely coupled
@@ -8,16 +9,16 @@ It's an architectural style that structures an application as a collection of se
 
 enables the rapid, frequent, reeliable delivery of large, complex applications and envolve its tech stack.
 
-## Container
+### Container
 It's just a **process** on the machine uses **namespaces** and **control groups (cgroup)** to provide isolation  
 Isolated fully contained application that runs with all its dependencies
 
-## Docker
+### Docker
 Relies on Linux kernel cgroup to isolate applications into namespaces.    
 Runs on same kernel, shares on same kernel.   
 But isolated and conatined in a namespace that seperated from the host.  
 
-## Container vs. VM
+### Container vs. VM
 **Container** shares the host operating system and kernel.   
 **VM** abstracts hardware and having guest operating system.  
 
@@ -28,39 +29,48 @@ But isolated and conatined in a namespace that seperated from the host.
 `RUN`   
 `CMD` : what process/going to run when docker container starts   
 
+Dockerfile:
+```Dockerfile
+FROM golang:1.15-alpine
+WORKDIR /myapp
+COPY app.go .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -o app .
+CMD ["./app"]
+```
+
 ## Building container
 Build a simple app
 #### Single Stage Build
 1. Dockerfile
-2. Build image: `docker build -t [image_name] .`
-  * `docker build -t mycontainer:v0.0.1 .`
+2. Build image: `docker build -t [image_name] .`   
+   e.g. `docker build -t mycontainer:v0.0.1 .`
 3. Run & test App
 
-Other Command:
-- `docker history`
-   * Show all layers that we are added to container
+##### Other Command:
+###### `docker history`
+Show all layers that we are added to container
    * When build a container, almost all command in dockerfile lay on the top of file system
    * Layers can be used, cached -> unique ID, inspected, changed
    * **Disadvantage**: add size to container image   
    e.g. `docker history [image_name]`
-- `docker image ls`
+###### `docker image ls`
+List the images in docker engine   
    * docker image is in repository after building
-   * List the images in docker engine   
    e.g. `docker image ls | grep mycontainer`
-- `docker run`
-   * Runs the container (docker container starts running)
+###### `docker run`
+Runs the container (docker container starts running)
    * `--rm`: *By default a container’s file system persists even after the container exits.* This makes debugging a lot easier (since you can inspect the final state) and you retain all your data by default.    
    But if you are running short-term foreground processes, these container file systems can really pile up. If instead you’d like Docker to automatically clean up the container and remove the file system when the container exits
    * `-it`: interactive mode   
    e.g. `docker run --rm -it --name [container_name] [image_name]`
-- `docker ps`
-   * Lists teh running container   
+###### `docker ps`
+Lists the running container   
    e.g. `docker ps | grep mycontainer`   
    `sudo ps aux | grep app`   
    `cat /proc/13434/cgroup`
-- `docker exec`
-   * Interact with container
-   * `it`: interactively open to conatiner
+###### `docker exec`
+Interact with container
+   * `-it`: interactively open to conatiner
    * Enters the container, puts user in the root of entry directory
    e.g. `docker exec -it [container_name] /bin/sh`   
    `ls`   
@@ -68,9 +78,9 @@ Other Command:
 
 Since this **container runs in a seperated and isolated network namespace**, so **can't it see on the host network**.  
 -> Checking Ports Linux With `netstat`    
-`netstat -antp | grep 8181` would fail on host
+:heavy_multiplication_x: `netstat -antp | grep 8181` would fail on host
 
-- Get IP address
+###### Get IP address
    * Inside container:    
    `ip a` (if have a shell or bash)
    * Outside container on host network:    
@@ -82,24 +92,49 @@ Since this **container runs in a seperated and isolated network namespace**, so 
    * Without port mapping, it's only listening on the container IP address and own network namespace
    * Have to use IP address and port to access application
 
-Port Mapping `-p`
-* If want to expose port outside container to the host
-* `docker run --rm -it --name [container_name] -p 9393:8181 [image_name]`   
-Maps container's port 8181 to host's port 9393, so now we can reach it through host
+###### Port Mapping `-p`
+If want to expose port outside container to the host   
+   `docker run --rm -it --name [container_name] -p 9393:8181 [image_name]`   
+   Maps container's port 8181 to host's port 9393, so now we can reach it through host
 
 - `vim t`  
    Look at IP table rules on the host that are created by conatiner
--  Stop mapping, if stop container 
+-  Stop mapping, if **stop container** 
 
+###### Stop Container
+`[ctrl C]`: stop container as it runs in foreground with `-it`   
+`docker stop [container_name]`: stop container as it runs in background as demon with `-d`
 
 #### Multi Stage Build
+Seperating **build process** and **run process**
+- Minimize the size of docker image (as there are many layers)
+- Starts from a base container (`builder`)  
+Starts another runtime container copy the application
+
+Dockerfile.multistage: 
+```Dockerfile
+FROM golang:1.15-alpine AS builder
+WORKDIR /myapp
+COPY app.go .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -o app .
+
+FROM alpine:latest
+WORKDIR /code
+COPY --from=builder /myapp/app .
+CMD ["./app"]
+```
+=> One layer container with **small size & footprint**
+
+Build image
+`docker build -t mycontainer:multistage -f dockerfile.multistage .`
 
 ## Container Networking
 
 ## Compose
 
 # [Notes from YouTube video](https://www.youtube.com/watch?v=3c-iBn73dDE)
-## What is a container?
+## Concepts
+### What is a container?
 - A way to package application with all the necessary dependencies
 - Portable artifact, easily shared and moved around between developer and operation teams
 - Make development and deployment efficiently
@@ -109,33 +144,208 @@ Technically,
 - Mostly, **Linux Base Image** because small in size
 - Application image on the top
 
-## Why container useful?
-### Application development
-##### Before container
+### Why container useful?
+#### Application development
+###### Before container
 On local development environment, developers have to install same binaries of services
 * installation process is different on different OS environment
 * many steps can go wrong
-##### After container
+###### After container
 Don't need to install any services on own OS
 * container has own isolated environment
 * packaged with all needed configuration
 * one command to install application
 * can run same app with 2 different version at same time
 
-### Application deployment
-##### Before container
+#### Application deployment
+###### Before container
 * Developer will produce artifacts/databases/other services with instructions of how to install and configure those on server
 * Operation will handle setting up the environment to deployment
  
 Configuration needed on server -> dependency version conflict  
 Textual guid of deployment -> misunderstandings
 
-##### After container
+###### After container
 Don't need to install any services on own OS
 * Developer and operations work together to package the application in container
 * No envrionment configuration needed on the server
 
 Run a docker command that pulls container image in Repository
 
-## Where do containers live?
+### Where do containers live?
 Container Repository (private/public e.g. Docker Hub)
+
+### Docker Image v.s. Docker Container
+| Docker Image | Docker Container |
+| ------------- | ------------- |
+| The actual package | Actual start the application |
+| Artifacts that can be moved around | Container environment is created |
+| **Not running** | **Running** |
+
+**Container** is a running environment of **Image**
+- Container: file system, environment configuration, Application image
+- Port: binded to talk to application running inside container
+- Virtual file system
+
+Everything in DockerHub are images
+
+### Docker v.s. VM
+##### Docker on OS level
+Operating systems have 2 layers
+| ------------- |
+| 2. Layer: Application (run on Kernel layer) |
+| 1. Layer: OS Kernel (communicate with hardware components) |
+| Hardware (CPU and memory) |
+They use same Linux Kernel, but implemented different application on top
+
+##### Different level of absractions
+Docker virtualize the application layer.   
+VM virtualize the application layer and OS Kernel layer.
+- Size: Docker image much smaller
+- Speed: Docker conatiners start and run faster
+- Compatibility: VM of any OS can run on any OS host   
+So leads to a problem of Docker
+
+##### Why Linux based docker containers don't run on Windows
+If want to run a Linux application on Windows Kernel, it will fail  
+Is Kernel compatable with the Docker images?
+
+## Basic Commands
+### Version and Tag
+### Docker Commands
+
+##### `docker pull`
+Download image from repository  
+> `docker pull [image_name]`  
+
+##### `docker images`
+Check all existing images
+- Images have tags and versions
+- No conatiner running yet
+
+##### `docker run`  
+Pull image, create container, and start image in a container -> Combine `docker pull` & `docker start`  
+e.g. 
+> `docker run redis`  
+> `docker run redis:4.0`
+
+- `-d`  
+   Detached mode -> use terminal again
+- `-p [host_port]:[container_port] [image_name]`    
+   Bind container port and host port
+- `--name [container_name] [image_name]`   
+   Name the container. Without it, get default random name
+
+##### `docker ps` 
+List all running containers
+- `-a`  
+   List all running and stopped container
+
+Shows [Container ID], [Image], [Command], [Created], [Status], [Ports], [Names]
+
+##### `docker stop`  
+Stop the container
+- Attached mode `docker run`: `[ctrl C]`
+- Detached mode `docker run -d`: `docker stop [container_ID]`
+
+##### `docker start`
+Start stopped container
+- If want to restart container, need the [container_ID]  
+  `docker start [container_ID]`
+
+
+| `docker run` | `docker start` |
+| ------------- | ------------- |
+| Create new container from an image | Container already created, to restart a stopped container |
+| Take image name w/o specific version | Take container name/ID |
+| With image | With container|
+
+
+##### [Ports]
+Specify on which port the container is listening to the incoming requests  
+**Container Port v.s. Host Port**   
+How do we not have conflicts while both application are running on the same port?
+- *Multiple containers* can run on host machine
+- Laptop has only certain ports available
+- :thumbsdown: *Conflicts* when same port on host machine
+- :thumbsup: *No conflicts* when same port on different containers that binding with different ports on host machine
+
+## Debug Container
+##### `docker logs`
+Get the logs information of container
+> `docker logs [container_ID]/[container_name]` 
+
+##### `docker exec`
+Get the terminal of a running container
+- `-it`   
+   Interactive terminal
+> `docker exec -it [container_ID] \bin\bash`   
+   Enter the container's terminal as root user
+>> `ls`  
+>> `pwd`  
+>> `env`  
+>> `exit`
+
+
+## Docker Networks
+Deploying two containers in **same isolated Docker Network**, they can talk to each other using **just container name**, without localhost port no.    
+**Application runs outside the Docker Network** needs to connect to them from outside from the host **using localhost port no.**  
+
+Docker by default provide some network
+
+##### `docker network ls`
+List all auto-generated docker networks
+
+##### `docker network create`
+Create network
+> `docker network create [network_name]`
+
+##### Make container run in network
+`docker run --net`   
+e.g. create two container [mongoDB] and [mongoDB-express] in same docker network
+```Command
+# Start mongodb
+docker run -d \
+-p 27017:27017 \
+-e MONGO_INITDB_ROOT_USERNAME=admin \
+-e MONGO_INITDB_ROOT_PASSWORD=password \
+--name mongodb \
+--net mongo-network \
+mongo
+
+# Start mongo-express
+docker run -d \
+-p 8081:8081 \
+-e ME_CONFIG_MONGODB_ADMINUSERNAME=admin \
+-e ME_CONFIG_MONGODB_ADMINPASSWORD=password \
+--name mongo-express \
+--net mongo-network \
+-e ME_CONFIG_MONGODB_SERVER=mongodb \
+mongo-express
+```
+
+## Docker Compose
+For running multiple Docker containers to make :point_up: easier
+
+e.g. docker run command v.s. mongo-docker-compose.yaml
+```Command
+docker run -d \
+-p 27017:27017 \
+-e MONGO_INITDB_ROOT_USERNAME=admin \
+-e MONGO_INITDB_ROOT_PASSWORD=password \
+--name mongodb \                            => container name
+--net mongo-network \
+mongo                                       => image name
+```
+
+```yaml
+version: '3'                  => version of docker-compose
+services:
+   mongodb:                   => container name
+      image: mongo            => image name
+```
+
+## Demo project
+### Development
+### Continuous Integration/Delivery
+### Deployment
