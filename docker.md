@@ -105,6 +105,17 @@ If want to expose port outside container to the host
 `[ctrl C]`: stop container as it runs in foreground with `-it`   
 `docker stop [container_name]`: stop container as it runs in background as demon with `-d`
 
+Until now, docker container is available in local docker engine image store, we want to **upload/publish** to allow access outside
+
+###### Upload/Publish Container
+DockerHub: create repository, publish container    
+Need to change the docker image tag to match the DockerHub repository tag (append tag)
+- `docker tag [image_name]:[version] [repository_tag]:[version]`
+- `docker push [repository_tag]:[version]`  
+   When push, docker knows where to push the image
+- `docker login`    
+   If repository is private
+
 #### Multi Stage Build
 Seperating **build process** and **run process**
 - Minimize the size of docker image (as there are many layers)
@@ -124,13 +135,71 @@ COPY --from=builder /myapp/app .
 CMD ["./app"]
 ```
 => One layer container with **small size & footprint**
+=> Less layer -> less size
 
 Build image
 `docker build -t mycontainer:multistage -f dockerfile.multistage .`
 
 ## Container Networking
+Container: a process instead running directly on the host, just be contained in a namespace with all dependencies isolated from host      
+=> start container -> start network namespaces    
+=> doesn't have interfaces -> needs a way to communicate outside of network namespace  
+
+The container was created when we run it.    
+It has specific namespace that can attach interfaces => create veth pair
+
+### Docker Network
+##### Bridge Network
+It attaches container to bridge (link layer)    
+By default, when install Docker, all conatiners have link back to host   
+`docker0` bridge is in the host network namespace     
+=> Can move traffic in & out of the host to container
+
+Look inside container, interface `eth0` (part of veth pair)
+
+**veth pair** in Linux is a link between two namespaces. Like physical layer surface
+- `brctl show docker0`
+- `ip link show`   
+   Show the veth interface on the host
+
+##### Host Network
+When run container, share its namespace of host with it      
+`docker run --network=host`     
+Use it when want to change network of host
+
+##### None
+`docker run --network=none`
+
+### Create veth pair
+`ip link add hostside_veth type veth peer name test_veth`    
+`ip link show | grep hostside_veth`
+
+### Move one veth pair from host to container
+Change IP address inside container and set link with bridge or other configuration
+- Get **process ID** of container: `docker inspect -f '{{.State.Pid}}' [container_name]`
+- Get **network namespace** of container: `ip netns identify [process_ID]`
+- Set peer interface inside container from host: `ip link set test_veth netns [network_namespace]`
+- Set host: `ip link set hostside_veth master docker0`
+
+Because veth is consider as one interface     
+=> One side is down, the other side is down
+
+### `docker network inspect`
+Inspect networks and see what containers are connected to them
+
+### Create a bridge and attach container to the network
+Bridge network: all containers that are connected to the network share the same layer
+- `docker network create [network_name] -d bridge --subnet "5.5.5.0/24"`
+- `docker run --network=[network_name]`
+
+Run container and attach it to the network
+
+### Difference between default & user created network
+User created network allow every contained added to it to get DNS entry   
+=> able to ping the IP address of container: `ping [container_name]`
 
 ## Compose
+
 
 # [Notes from YouTube video](https://www.youtube.com/watch?v=3c-iBn73dDE)
 ## Concepts
@@ -327,7 +396,8 @@ mongo-express
 ## Docker Compose
 For running multiple Docker containers to make :point_up: easier
 
-e.g. docker run command v.s. mongo-docker-compose.yaml
+e.g. docker run command v.s. mongo-docker-compose.yaml     
+docker run command
 ```Command
 docker run -d \
 -p 27017:27017 \
@@ -337,7 +407,7 @@ docker run -d \
 --net mongo-network \
 mongo                                       => image name
 ```
-
+mongo-docker-compose.yaml
 ```yaml
 version: '3'                  => version of docker-compose
 services:
