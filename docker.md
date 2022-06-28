@@ -17,29 +17,29 @@ Technically,
 
 ## Why container useful?
 ### Application development
-#### Before container
+##### Before container
 On local development environment, developers have to install same binaries of services
-    * installation process is different on different OS environment
-    * many steps can go wrong
-#### After container
+* installation process is different on different OS environment
+* many steps can go wrong
+##### After container
 Don't need to install any services on own OS
-    * container has own isolated environment
-    * packaged with all needed configuration
-    * one command to install application
-    * can run same app with 2 different version at same time
+* container has own isolated environment
+* packaged with all needed configuration
+* one command to install application
+* can run same app with 2 different version at same time
 
 ### Application deployment
-#### Before container
-    * Developer will produce artifacts/databases/other services with instructions of how to install and configure those on server
-    * Operation will handle setting up the environment to deployment
-    
-Configuration needed on server -> dependency version conflict
-
+##### Before container
+* Developer will produce artifacts/databases/other services with instructions of how to install and configure those on server
+* Operation will handle setting up the environment to deployment
+ 
+Configuration needed on server -> dependency version conflict  
 Textual guid of deployment -> misunderstandings
 
-#### After container, don't need to install any services on own OS
-    * Developer and operations work together to package the application in container
-    * No envrionment configuration needed on the server
+##### After container
+Don't need to install any services on own OS
+* Developer and operations work together to package the application in container
+* No envrionment configuration needed on the server
 
 Run a docker command that pulls container image in Repository
 
