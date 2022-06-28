@@ -52,27 +52,37 @@ Show all layers that we are added to container
    * When build a container, almost all command in dockerfile lay on the top of file system
    * Layers can be used, cached -> unique ID, inspected, changed
    * **Disadvantage**: add size to container image   
-   e.g. `docker history [image_name]`
+
+e.g. `docker history [image_name]`
+
 ###### `docker image ls`
 List the images in docker engine   
    * docker image is in repository after building
-   e.g. `docker image ls | grep mycontainer`
+   
+e.g. `docker image ls | grep mycontainer`
+
 ###### `docker run`
 Runs the container (docker container starts running)
    * `--rm`: *By default a container’s file system persists even after the container exits.* This makes debugging a lot easier (since you can inspect the final state) and you retain all your data by default.    
    But if you are running short-term foreground processes, these container file systems can really pile up. If instead you’d like Docker to automatically clean up the container and remove the file system when the container exits
    * `-it`: interactive mode   
-   e.g. `docker run --rm -it --name [container_name] [image_name]`
+
+e.g. `docker run --rm -it --name [container_name] [image_name]`
+
 ###### `docker ps`
-Lists the running container   
-   e.g. `docker ps | grep mycontainer`   
+Lists the running container
+
+e.g. `docker ps | grep mycontainer`
+
    `sudo ps aux | grep app`   
    `cat /proc/13434/cgroup`
 ###### `docker exec`
 Interact with container
    * `-it`: interactively open to conatiner
    * Enters the container, puts user in the root of entry directory
-   e.g. `docker exec -it [container_name] /bin/sh`   
+
+e.g. `docker exec -it [container_name] /bin/sh`
+
    `ls`   
    `ps aux`  
 
@@ -134,7 +144,7 @@ WORKDIR /code
 COPY --from=builder /myapp/app .
 CMD ["./app"]
 ```
-=> One layer container with **small size & footprint**
+=> One layer container with **small size & footprint**     
 => Less layer -> less size
 
 Build image
@@ -170,11 +180,12 @@ Use it when want to change network of host
 ##### None
 `docker run --network=none`
 
-### Create veth pair
+### veth
+##### Create veth pair
 `ip link add hostside_veth type veth peer name test_veth`    
 `ip link show | grep hostside_veth`
 
-### Move one veth pair from host to container
+##### Move one veth pair from host to container
 Change IP address inside container and set link with bridge or other configuration
 - Get **process ID** of container: `docker inspect -f '{{.State.Pid}}' [container_name]`
 - Get **network namespace** of container: `ip netns identify [process_ID]`
@@ -278,6 +289,11 @@ So leads to a problem of Docker
 ##### Why Linux based docker containers don't run on Windows
 If want to run a Linux application on Windows Kernel, it will fail  
 Is Kernel compatable with the Docker images?
+
+##### Restart container
+When you restart the container, everything configured in that container application is gone    
+=> data is lost    
+=> **Docker Volumes for Data Presistence**
 
 ## Basic Commands
 ### Version and Tag
@@ -394,26 +410,129 @@ mongo-express
 ```
 
 ## Docker Compose
-For running multiple Docker containers to make :point_up: easier
+For running multiple Docker containers to make :point_up: easier   
+A structured way to contain very normal common docker commands
 
+### Compose file - `yaml`
 e.g. docker run command v.s. mongo-docker-compose.yaml     
 docker run command
 ```Command
+# Start mongodb
 docker run -d \
--p 27017:27017 \
--e MONGO_INITDB_ROOT_USERNAME=admin \
--e MONGO_INITDB_ROOT_PASSWORD=password \
 --name mongodb \                            => container name
+-p 27017:27017 \                            => [host_port]:[container_port]
+-e MONGO_INITDB_ROOT_USERNAME=admin \       => environment
+-e MONGO_INITDB_ROOT_PASSWORD=password \
 --net mongo-network \
 mongo                                       => image name
+
+# Start mongo-express
+docker run -d \
+--name mongo-express \
+-p 8081:8081 \
+-e ME_CONFIG_MONGODB_ADMINUSERNAME=admin \
+-e ME_CONFIG_MONGODB_ADMINPASSWORD=password \
+-e ME_CONFIG_MONGODB_SERVER=mongodb \
+--net mongo-network \
+mongo-express
 ```
-mongo-docker-compose.yaml
+mongo-docker-compose.yaml (**Indentation** in `yaml` file is important)
 ```yaml
-version: '3'                  => version of docker-compose
+version: '3'                                => version of docker-compose
 services:
-   mongodb:                   => container name
-      image: mongo            => image name
+   mongodb:                                 => container name
+      image: mongo                          => image name
+      ports:
+         - 27017:27017                      => [host_port]:[container_port]
+      environment:
+         - MONGO_INITDB_ROOT_USERNAME=admin
+         - MONGO_INITDB_ROOT_PASSWORD=password
+   mongo-express:
+      image: mongo-experss
+      ports: 
+         - 8081:8081
+      environment:
+         - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
+         - ME_CONFIG_MONGODB_ADMINPASSWORD=password
+         - ME_CONFIG_MONGODB_SERVER=mongodb
 ```
+**Network configuration** is not in the docker compose    
+:heavy_check_mark: Docker Compose takes care of creating a common network   
+We don't need to create network and specify in which network those containers will run in
+
+### Start docker containers using docker compose file
+Docker Compose is already installed with Docker     
+> `docker-compose -f [file_name] up`
+
+Create default network `myapp_default`     
+Create those two containers in that network    
+=> logs of two containers are mixed because we are starting them at the same time
+
+If there are two containers and one container **depend on** the other, can configure waiting logic in docker compose
+
+### Stop docker containers
+Stop, remove all containers created in the `yaml` file and remove network     
+Use `docker stop` with names of every containers
+> `docker-compose -f [file_name] down`
+
+## Dockerfile
+To build docker image from application, we have to copy the content of application (artifacts) into Dockerfile   
+Blueprint for building images
+
+Image Environment Blueprint
+```
+install node
+
+set MONGO_INITDB_ROOT_USERNAME=admin
+set MONGO_INITDB_ROOT_PASSWORD=password
+
+create /home/app folder
+
+copy current folder files to /home/app folder
+
+start the app with: "node server.js"
+```
+
+Dockerfile
+```Dockerfile
+FROM node                                  => start by basing it on another image
+
+ENV MONGO_INITDB_ROOT_USERNAME=admin \     => Optionally define environment variables
+    MONGO_INITDB_ROOT_PASSWORD=password    => Alternative to define environmental variables in docker compose file
+
+RUN mkdir -p /home/app                     => RUN -execute any Linux command
+                                           => directory is created inside of the CONTAINER
+COPY . /home/app                           => COPY -execute on the HOST machine
+
+CMD ["node", "/home/app/server.js"]                  => CMD -execute entry point Linux command (only one)
+                                           => Node is pre-installed because of base image
+```
+`RUN` command in Dockerfile will **apply to container environment, not host environment**     
+Better to build **environmental variables** in **docker compose file**, can **change and overwrite** it in docker compose file **instead of rebuild the image**
+
+### Build imgae from a Dockerfile
+`docker build -t [image_name]:[tag_name] [dockerfile_location]`     
+
+`docker images`: to see images
+
+When you **adjust** the Dockerfile, you **must stop & delete container, and delete & rebuild the image**
+
+`docker rm [continaer_ID]`: delete the container
+
+`docker rmi [image_ID]`: once delete the container, can delete image
+
+## Docker Repository
+You save different tags/versions of same image
+
+1. Have to login to private repo to authenticate => `docker login`
+2. Build an image
+3. Tag an image => `docker tag`    
+   Naming in Docker registries: `registryDomain/imageName:tag`    
+   DocherHub use shortcut that no need to include `registryDomain` when do `docker pull`     
+   Original local image name, docker don't know where to push my application by default      
+   => tag/rename the image to include the repo domain/address
+4. `docker push`     
+   Push image layer by layer
 
 ## Demo project
 ### Development
