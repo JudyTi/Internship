@@ -1,5 +1,5 @@
 # Table of Contents
-- [0. Summary & Questions](#summary-questions)
+- [0. Summary & Questions](#summary--questions)
 - [1. Notes from Wael's video](#notes-from-waels-video)
    - [1.1 Concepts](#concepts)
    - [1.2 Building container](#building-container)
