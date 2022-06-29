@@ -1,3 +1,26 @@
+# Table of Contents
+- [1. Notes from Wael's video](#Notes from Wael's video)
+   - [1.1 Concepts](#Concepts)
+   - [1.2 Building container](#Building container)
+      - [1.2.1 Single Stage Build](#Single Stage Build)
+         - [Common Commands for image & container building](#Other Command)
+         - [Port Mapping](#Port Mapping)
+         - [Upload/Publish Container](#Upload/Publish Container)   
+      - [1.2.2 Multi Stage Build](#Multi Stage Build)   
+   - [1.3 Container Networking](#Container Networking)
+      - [1.3.1 `bridge`, `host`, and `none`](#Docker Network)
+      - [1.3.2 `veth` pair](#`veth`)
+      - [1.3.3 `docker network inspect`](#`docker network inspect`)
+      - [1.3.4 Create a bridge and attach container to the network](#Create a bridge and attach container to the network)
+- [2. Notes from YouTube video](#Notes from YouTube video)
+   - [2.1 Concepts](#Concepts)
+   - [2.2 Basic Commands](#Basic Commands)
+   - [2.3 Debug Container](#Debug Container)
+   - [2.4 Docker Networks](#Docker Networks)
+   - [2.5 Docker Compose](#Docker Compose)
+   - [2.6 Dockerfile](#Dockerfile)
+   - [2.7 Docker Repository](#Docker Repository)
+
 # [Notes from Wael's video](https://gitlab.es.f5net.com/cloud/labs/docker)
 ## Concepts
 ### Microservices Architecture
