@@ -1,4 +1,5 @@
 # Table of Contents
+- [0. Summary & Questions](#summary-questions)
 - [1. Notes from Wael's video](#notes-from-waels-video)
    - [1.1 Concepts](#concepts)
    - [1.2 Building container](#building-container)
@@ -20,6 +21,39 @@
    - [2.5 Docker Compose](#docker-compose)
    - [2.6 Dockerfile](#dockerfile-1)
    - [2.7 Docker Repository](#docker-repository)
+
+# Summary & Questions
+
+- Container is a much more lightweight way than VM to package application with its configurations, dependencies, environments.  
+   => can be shared easily between developers and operation
+
+- Roadmap
+   1. Have an application
+   2. Build container for application     
+      Base image: `docker pull [image]` from repo     
+      Run new container for application: `docker run`    
+      To use terminal for application: `docker exec`   
+   3. Docker compose   
+      Easier way to manage nultiple containers => similar to `Kubernetes`   
+   4. Dockerfile    
+      Knows where to start when run the image and start the container    
+   5. Push image to remote 
+      1. Build image
+      2. Change tag (`docker tag`) so that it knows which repo to push to
+      3. `docker push`
+<br><br />
+- What is Docker Network?   
+   Networking is about communication among processes, and Docker’s networking is no different.    
+   Docker networking is primarily used to establish communication between Docker containers and the outside world via the host machine where the Docker daemon is running.   
+   Using `veth` pair
+
+- What is the different between port and `veth` pair?  
+   They work together to let data know where it should go.   
+   => Make communication between Docker containers and the outside world
+
+   The difference is in level of [protocol stack](https://en.wikipedia.org/wiki/Protocol_stack):
+   + **port** is on **Transport layer**
+   + **`veth` pair(interface)** is on **Link layer**
 
 # [Notes from Wael's video](https://gitlab.es.f5net.com/cloud/labs/docker)
 ## Concepts
