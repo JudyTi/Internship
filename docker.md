@@ -21,7 +21,7 @@
    - [2.5 Docker Compose](#docker-compose)
    - [2.6 Dockerfile](#dockerfile-1)
    - [2.7 Docker Repository](#docker-repository)
-- [3. Resources](#resource)
+- [3. Resources](#resources)
 
 # Summary & Questions
 
