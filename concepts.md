@@ -32,10 +32,15 @@ Container is just a **process** on the machine uses **namespaces** and **control
 + **Protocol**: a set of rules for data transm ission which are agreed by sender and receiver
 + TCP/IP is th e dominant protocol suite for Internet usage.
 
-<img src="./images/network_model.png" alt=network_model width="500"/>
-<img src="./images/network_model-1.png" alt=network_model width="500"/>
+<img src="./images/network_model.png" alt=network_model width="500"/> <img src="./images/network_model-1.png" alt=network_model width="500"/>
 
-<img src="./images/physical_network_device.png" alt=node width="800"/>
+<img src="./images/physical_network_device.png" alt=node width="700"/>  
+
+
+### Docker Networking
+**Container Network Model** (CNM)
+
+<img src="./images/cnm.png" alt=container_network_model width="700"/>
 
 In `Docker`, we have to use IP address and port to access application
 - Port mapping & IP address
@@ -44,14 +49,7 @@ In `Docker`, we have to use IP address and port to access application
          `docker run --rm -it --name [container_name] -p 9393:8181 [image_name]`   
          Maps container's port 8181 to host's port 9393, so now we can reach it through host    
          Without port mapping, it's only listening on the container IP address and own network namespace
-   + Get IP address: `curl [IP_address]:8181`    
-
-
-### Docker Networking
-**Container Network Model** (CNM)
-
-<img src="./images/cnm.png" alt=container_network_model width="700"/>
-
+   + Get IP address: `curl [IP_address]:8181`  
 
 #### Bridge Network
 Unique Network namespace for each container
@@ -82,7 +80,7 @@ Use it when want to change network of host
 
 #### none
 Disable all networking for containers   
-`docker run --network=none`
+`docker run --network=none`    
 Use it in conjunction with a custom network
 
 
