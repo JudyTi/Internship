@@ -21,6 +21,7 @@
    - [2.5 Docker Compose](#docker-compose)
    - [2.6 Dockerfile](#dockerfile-1)
    - [2.7 Docker Repository](#docker-repository)
+- [3. Resources](#resource)
 
 # Summary & Questions
 
@@ -614,3 +615,7 @@ You save different tags/versions of same image
 ### Development
 ### Continuous Integration/Delivery
 ### Deployment
+
+# Resources
+[docker cheetsheet](https://github.com/collabnix/dockerlabs/blob/master/docker/cheatsheet/README.md)
+
