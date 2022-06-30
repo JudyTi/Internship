@@ -34,13 +34,11 @@ Container is just a **process** on the machine uses **namespaces** and **control
 
 <img src="./images/network_model.png" alt=network_model width="500"/> <img src="./images/network_model-1.png" alt=network_model width="500"/>
 
-<img src="./images/physical_network_device.png" alt=node width="700"/>  
+<img src="./images/physical_network_device.png" alt=node width="600"/>  
 
 
-### Docker Networking
-**Container Network Model** (CNM)
-
-<img src="./images/cnm.png" alt=container_network_model width="700"/>
+### Docker Container Networking
+<img src="./images/network_ns.png" alt=network_ns width="700"/>
 
 In `Docker`, we have to use IP address and port to access application
 - Port mapping & IP address
@@ -83,16 +81,19 @@ Disable all networking for containers
 `docker run --network=none`    
 Use it in conjunction with a custom network
 
+**Container Network Model** (CNM)
+
+<img src="./images/cnm.png" alt=container_network_model width="700"/>
 
 ### Kubernetes Networking
 <img src="./images/k8s_network.png" alt=k8s_network width="500"/>
 
 #### Pod Network
-Each Pod has a unique IP address
+Each Pod has a unique IP address    
 IP address reachable from all other Pods in the K8s cluster
 
 - Problems of Port Mapping     
-   :thumbsdown: *Conflicts* when both application/container map to same port on host machine
+   :thumbsdown: *Conflicts* when both application/container map to same port on host machine     
    => Don't know which port is free on host right now
 
 - Pod abstraction    
@@ -116,6 +117,7 @@ All containers inside the same Pod share the same Pod network namespace (1 inter
   
 
 #### Node Network
-
+Each Node has a unique IP address    
+Can communicate freely with other Nodes and use resources on the same network
 
 #### Cluster Network
