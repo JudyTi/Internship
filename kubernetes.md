@@ -2,6 +2,7 @@
 [Kubernetes' documentation](https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/)   
 [YouTube video](https://www.youtube.com/watch?v=X48VuDVv0do)   
 [K8s Architecture](https://zhuanlan.zhihu.com/p/382229383)
+[K8s' concepts from Aliyun](https://developer.aliyun.com/article/718798)
 
 # [Notes from Wael's & YouTube video](https://www.youtube.com/watch?v=X48VuDVv0do)
 ## Concepts
@@ -24,6 +25,9 @@ Trend to Microservices
 
 ### Core Components of K8s
 - **Node**: a simple server (physical/VM)
+
+<img src="./images/Node.png" alt=node width="200"/>
+<img src="./images/Node-1.png" alt=node width="400"/>
 
 ##### Abstraction of container
 - **Pod**
@@ -148,6 +152,8 @@ Many Nodes in K8s cluster, communicating via Services
 ##### Master server/Control Plane
 Services that manage state
 
+<img src="./images/master.png" alt=master width="800"/>
+
 How to interact with this cluster?
 How to:
 - schedule Pod?
@@ -200,6 +206,3 @@ To interact with cluster, need to interact with Master processes' API server usi
 - UI
 - API
 - CLI -> kubectl (most powerful)
-
-
-
