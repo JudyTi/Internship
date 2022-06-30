@@ -119,6 +119,8 @@ Reources: CPU | RAM | Storage
 Master servers -> less resources    
 Worker servers actually do the job -> more resources
 
+![K8s_arch](/images/K8s_archtecture.png)
+
 Freely add new servers
 To add new Master/Node server:
 1. get new bare server
