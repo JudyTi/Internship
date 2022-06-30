@@ -242,9 +242,9 @@ By default, when install Docker, all conatiners have link back to host
 `docker0` bridge is in the host network namespace     
 => Can move traffic in & out of the host to container
 
-Look inside container, interface `eth0` (part of veth pair)
+Look inside container, interface `eth0` (part of veth peer)
 
-**veth pair** in Linux is a link between two namespaces. Like physical layer surface
+**veth peer** in Linux is a link between two namespaces. Like physical layer surface
 - `brctl show docker0`
 - `ip link show`   
    Show the veth interface on the host
@@ -258,11 +258,11 @@ Use it when want to change network of host
 `docker run --network=none`
 
 ### veth
-##### Create veth pair
+##### Create veth peer
 `ip link add hostside_veth type veth peer name test_veth`    
 `ip link show | grep hostside_veth`
 
-##### Move one veth pair from host to container
+##### Move one veth peer from host to container
 Change IP address inside container and set link with bridge or other configuration
 - Get **process ID** of container: `docker inspect -f '{{.State.Pid}}' [container_name]`
 - Get **network namespace** of container: `ip netns identify [process_ID]`
@@ -618,4 +618,3 @@ You save different tags/versions of same image
 
 # Resources
 [docker cheetsheet](https://github.com/collabnix/dockerlabs/blob/master/docker/cheatsheet/README.md)
-
