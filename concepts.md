@@ -29,7 +29,7 @@ Container is just a **process** on the machine uses **namespaces** and **control
       * Limits **how much you can use**
 
 ### Network
-+ **Protocol**: a set of rules for data transm ission which are agreed by sender and receiver
++ **Protocol**: a set of rules for data transmission which are agreed by sender and receiver
 + TCP/IP is th e dominant protocol suite for Internet usage.
 
 <img src="./images/network_model.png" alt=network_model width="500"/> <img src="./images/network_model-1.png" alt=network_model width="500"/>
@@ -86,7 +86,7 @@ Use it in conjunction with a custom network
 <img src="./images/cnm.png" alt=container_network_model width="700"/>
 
 ### Kubernetes Networking
-<img src="./images/k8s_network.png" alt=k8s_network width="500"/>
+<img src="./images/k8s_network-1.png" alt=k8s_network-1 width="600"/>
 
 #### Pod Network
 Each Pod has a unique IP address    
