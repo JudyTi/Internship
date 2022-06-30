@@ -1,6 +1,7 @@
 # Resources
 [Kubernetes' documentation](https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/)   
-[YouTube video](https://www.youtube.com/watch?v=X48VuDVv0do)
+[YouTube video](https://www.youtube.com/watch?v=X48VuDVv0do)   
+[K8s Architecture](https://zhuanlan.zhihu.com/p/382229383)
 
 # [Notes from Wael's & YouTube video](https://www.youtube.com/watch?v=X48VuDVv0do)
 ## Concepts
