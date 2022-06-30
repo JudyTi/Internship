@@ -58,6 +58,11 @@ If a container die and re-created, new IP address will assigned
             => Ingress
     * **Internel Service**
         + a service that not open to public requests (e.g. database)
+
+Endpoint - the local Pod IP address for the Service -> where to forward traffic
+Create an object -> label object -> find object through adding selector to definition and choose the same label
+
+
 - **Ingress** - Route traffic into cluster
     * URL with domain name
     * Public requests -> ingress -> service
@@ -193,3 +198,6 @@ To interact with cluster, need to interact with Master processes' API server usi
 - UI
 - API
 - CLI -> kubectl (most powerful)
+
+
+
