@@ -26,8 +26,7 @@ Trend to Microservices
 ### Core Components of K8s
 - **Node**: a simple server (physical/VM)
 
-<img src="./images/Node.png" alt=node width="200"/>
-<img src="./images/Node-1.png" alt=node width="400"/>
+<img src="./images/Node.png" alt=node width="300"/> <img src="./images/Node-1.png" alt=node width="500"/>
 
 ##### Abstraction of container
 - **Pod**
