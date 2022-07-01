@@ -219,11 +219,68 @@ To interact with cluster, need to interact with Master processes' API server usi
 
 Didn't edit context of `kubectl`, interacting with the default namespace    
 Didn't specify configuration option for `kubectl`, by default it will look for configuration to connect to cluster `~/.kube/config`
-`cat ~/.kube/config`
+`cat ~/.kube/config`     
 - Services certificate for accessing the cluster
 - Server address
 - Name, context for the username and access tocken for cluster
 
 ### Create Pod
 `kubectl create -f pod.yaml`  
-`kubectl get pod`
+- `kubectl create secret docker-registry dockerhub --docker-server="https://index.docker.io/v1/" --docker-username=judytian --docker-password="" --docker-email=` 
+- `kubectl get secrets`
+- `kubectl delete secret dockerhub`
+
+`kubectl describe pod mycontainer`
+
+`kubectl get pod` 
+- `kubectl get pod -o wide`
+
+`kubectl delete pod`
+
+### Create Service
+Why we need a Service to be able to access this Pod from my browser?    
+The Service create a virtual IP address
+- has endpoint => endpoint is container
+- IP address unique to the cluster
+
+Service has `selector` which has to match the label we created in the Pod
+
+`kubectl create -f service.yaml`  
+
+`kubectl get service`
+
+`kubectl get endpoints [service-name]`   
+=> the endpoint that a Service pointing to
+
+### If a Pod is deleted
+There is no endpoints in the Service.   
+If create Pod again, a new IP address will assign to Pod if you look at the endpoints of mycontainer
+
+### Expose Service
+Have to create a Service that would allow access from the underlay network because this is all still an overlay network, which means that this is at work inside the cluster.    
+`ip a`    
+=> Need to expose the Service to a port on IP address, so that I can access it from browser
+1. Node port   
+   - Open a specific port on the Node where the workload is
+   - Forward traffic from that Node to the Service
+
+   `docker ps`   
+   `docker exec -it ccec82b34846 sh`   
+   `iptables-save | grep 30080`
+   
+   `kubectl create -f nodeport.yaml`     
+   `kubectl get service`    
+2. Load balancer
+
+### Create Ingress
+The Ingress controller is a service that satisfies the configuration of network ingress from outside of cluster     
+
+If this K8s cluster was running directly on the machine and not inside the Docker container, we would access their service through port 80.   
+But because it's starting in a Docker container, there's another layer of redirection => use port 8181
+
+`kubectl create -f ingress.yaml`
+
+`kubectl get ingress`
+
+Get Node IP address
+`kubectl get node -o wide`
