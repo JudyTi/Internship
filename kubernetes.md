@@ -205,3 +205,25 @@ To interact with cluster, need to interact with Master processes' API server usi
 - UI
 - API
 - CLI -> kubectl (most powerful)
+
+## Command
+`apt install docker.io`    
+`apt install net-tools`
+
+`k3d cluster create demo -p 8081:80@loadbalancer -p 30080:30080@server:0`    
+`netstat -antp | grep 30080`
+
+`kubectl get node`
+
+`kubectl cluster-info`
+
+Didn't edit context of `kubectl`, interacting with the default namespace    
+Didn't specify configuration option for `kubectl`, by default it will look for configuration to connect to cluster `~/.kube/config`
+`cat ~/.kube/config`
+- Services certificate for accessing the cluster
+- Server address
+- Name, context for the username and access tocken for cluster
+
+### Create Pod
+`kubectl create -f pod.yaml`  
+`kubectl get pod`
