@@ -21,3 +21,5 @@
 
 See actual file used    
 `helm template .`
+
+`helm install [name] .`
