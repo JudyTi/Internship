@@ -16,3 +16,8 @@
 > chart/    
 > templates/    
 > values.yaml     => Default values of mychart (formated, templete file)
+
+`helm lint .`
+
+See actual file used    
+`helm template .`
