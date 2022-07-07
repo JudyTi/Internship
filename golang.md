@@ -1,5 +1,5 @@
 # Go
-[cheatsheet](https://quickref.me/golang)
+[Go cheatsheet](https://quickref.me/golang)
 
 Go's basic types are
 ```
@@ -92,6 +92,21 @@ func main() {
     sum += i
   }
   fmt.Println(sum)
+  
+  // array
+  var a [2]string
+  a[0] = "Hello"
+  a[1] = "World"
+  fmt.Println(a[0], a[1])
+  fmt.Println(a)
+
+  primes := [6]int{2, 3, 5, 7, 11, 13}
+  fmt.Println(primes)
+  
+  // This selects a half-open range which includes the first element, but excludes the last one.
+  // Slices are like references to arrays
+  var s []int = primes[1:4]
+  fmt.Println(s)
 }
 ```
 
