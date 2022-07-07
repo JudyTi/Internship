@@ -1,5 +1,7 @@
 # Go
 ## Why Go for backend
+Built-in concurrency mechanism
+
 Go has no virtual machinee or compiles to machine code, so programs are execute fast without warm-up time like Java.
 
 Also, Go has a built-in garbage collector that monitors and identifies occupied memory that’s no longer needed and frees it for reuse. This lowers the risk of security vulnerabilities due to code encapsulation and provides effective memory management. 
