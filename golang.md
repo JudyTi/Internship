@@ -1,4 +1,11 @@
 # Go
+
+[Writing Web Applications](https://go.dev/doc/articles/wiki/#tmp_4)
+
+- Get localhost for Linux:     
+  `ifconfig | grep "inet " | grep -v 127.0.0.1`
+- Using [inet]:[port]/...
+
 ## Why Go for backend
 Built-in concurrency mechanism
 
@@ -30,7 +37,7 @@ float32 float64
 complex64 complex128
 ```
 
-## Example
+## Go Basic Example
 
 ```Go
 package main
